@@ -1,6 +1,7 @@
 package com.rslt.baptisteapp
 
 import android.util.Log
+import android.widget.ArrayAdapter
 
 data class Contact(
     val nom: String,
@@ -12,6 +13,7 @@ data class Contact(
     val favori: Boolean
 )
 
+
 fun creerContactAPartirDeTexte(texte: String): Contact? {
     val nomRegex = Regex("Nom : (.*?) \\n")
     val prenomRegex = Regex("Prenom : (.*?) \\n")
@@ -21,8 +23,8 @@ fun creerContactAPartirDeTexte(texte: String): Contact? {
     val genreRegex = Regex("Genre : (.*?) \\n")
     val favoriRegex = Regex("Ajouté aux favoris")
 
-    val nom = nomRegex.find(texte)?.groupValues?.get(1)
-    val prenom = prenomRegex.find(texte)?.groupValues?.get(1)
+    val nom = nomRegex.find(texte)?.groupValues?.get(1)?.replace("\\s".toRegex(), "")
+    val prenom = prenomRegex.find(texte)?.groupValues?.get(1)?.replace("\\s".toRegex(), "")
     val dateNaissance = dateNaissanceRegex.find(texte)?.groupValues?.get(1)
     val numeroTel = numeroTelRegex.find(texte)?.groupValues?.get(1)
     val email = emailRegex.find(texte)?.groupValues?.get(1)
@@ -43,4 +45,18 @@ fun creerContactAPartirDeTexte(texte: String): Contact? {
         null
     }
 }
+
+
+fun getByname(name: String, contacts: List<Contact>): Contact? {
+    val splitName = name.split(" ")
+    if (splitName.size != 2) {
+        return null
+    }
+    val nom = splitName[0]
+    val prenom = splitName[1]
+
+    return contacts.find { it.nom == nom && it.prenom == prenom }
+}
+
+
 

@@ -6,23 +6,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ListAdapter
-import android.widget.TextView
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.ImageView
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.DiffUtil
 import android.widget.ListView
-import com.rslt.baptisteapp.Contact
-import com.rslt.baptisteapp.creerContactAPartirDeTexte
+import android.widget.Toast
 
 const val EXTRA_MESSAGE = "Change de fenetre"
 
@@ -30,6 +18,7 @@ class MainActivityHome : AppCompatActivity() {
 
     private lateinit var listView: ListView
     private lateinit var adapter: ArrayAdapter<String>
+    private val listcontact = mutableListOf<Contact>()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +32,28 @@ class MainActivityHome : AppCompatActivity() {
         button.setOnClickListener {
             changerfenetre()
         }
+
+        listView.setOnItemClickListener { adapterView, view, position, id ->
+            val selectedItem = adapter.getItem(position) as String
+            Log.i("Objet selectionné :", selectedItem)
+            val thecontact = getByname(selectedItem, listcontact)
+            Log.i("Objet selectionné :", thecontact.toString())
+            if (thecontact != null) {
+                val toastMessage = "Nom: ${thecontact.nom}, Prénom: ${thecontact.prenom}, Num de tel: ${thecontact.numeroTel},Date de naissance: ${thecontact.dateNaissance}"
+                Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Contact introuvable", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        listView.setOnItemLongClickListener { parent, view, position, id ->
+            val selectedItem = adapter.getItem(position) as String
+            adapter.remove(selectedItem)
+            val thecontact = getByname(selectedItem, listcontact)
+            listcontact.remove(thecontact)
+            true
+        }
+
     }
 
     private fun changerfenetre(){
@@ -58,6 +69,13 @@ class MainActivityHome : AppCompatActivity() {
                     Log.i("Informations De Retour :", testData.toString())
 
                     val contact = creerContactAPartirDeTexte(testData.toString()) //on creer un objet contact
+
+                    if (contact != null) {
+                        listcontact.add(contact)
+                        Log.i("Contact créé :", "${contact.nom} ${contact.prenom}")
+                    } else {
+                        Log.e("Erreur :", "Le contact créé est null")
+                    }
 
                     contact?.let { //on utilise l'objet contact
                         Log.i("Contact créé :", "${it.nom} ${it.prenom}")

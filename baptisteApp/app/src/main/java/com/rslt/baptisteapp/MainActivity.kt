@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import android.util.Patterns
 import android.widget.ImageView
 import android.widget.RadioButton
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -71,11 +72,14 @@ class MainActivity : AppCompatActivity() {
             val emailSTR = email.text.toString().trim()
             val genreId = genre.checkedRadioButtonId
 
-            // Vérifier si les champs obligatoires sont vides
             if (nom.isEmpty() || prenom.isEmpty() || emailSTR.isEmpty() || genreId == -1) {
-                Toast.makeText(this, "Veuillez remplir tous les champs obligatoires", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Veuillez remplir tous les champs obligatoires", Toast.LENGTH_SHORT).show()
+                val snack = Snackbar.make(it,"Veuillez remplir tous les champs obligatoires",Snackbar.LENGTH_LONG)
+                snack.show()
             } else if (!Patterns.EMAIL_ADDRESS.matcher(emailSTR).matches()) {
-                Toast.makeText(this, "Veuillez saisir une adresse email valide", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Veuillez saisir une adresse email valide", Toast.LENGTH_SHORT).show()
+                val snack = Snackbar.make(it,"Veuillez saisir une adresse email valide",Snackbar.LENGTH_LONG)
+                snack.show()
             } else {
 
                 val genreText = if (genreId != -1) {
