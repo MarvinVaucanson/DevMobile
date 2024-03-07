@@ -13,7 +13,7 @@ data class Contact(
     val favori: Boolean
 )
 
-
+//une class pour simplifier l'intégration. Elle pourrqit etre + opti
 fun creerContactAPartirDeTexte(texte: String): Contact? {
     val nomRegex = Regex("Nom : (.*?) \\n")
     val prenomRegex = Regex("Prenom : (.*?) \\n")
@@ -46,7 +46,7 @@ fun creerContactAPartirDeTexte(texte: String): Contact? {
     }
 }
 
-
+/* GETTER */
 fun getByname(name: String, contacts: List<Contact>): Contact? {
     val splitName = name.split(" ")
     if (splitName.size != 2) {

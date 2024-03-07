@@ -2,8 +2,11 @@ package com.rslt.baptisteapp
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.icu.text.SimpleDateFormat
+import android.icu.util.Calendar
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,9 +19,12 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import android.util.Patterns
+import android.view.View
 import android.widget.ImageView
 import android.widget.RadioButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
+        //declaration
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -51,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         val genre = findViewById<RadioGroup>(R.id.radioGroup)
         val fav = findViewById<CheckBox>(R.id.checkBox)
 
-
+        //fonction de bouton
         buttongal.setOnClickListener{
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(intent, REQUEST_GALLERY)
@@ -64,6 +71,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        datenaisse.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                Log.i("Passe ici ou quoi ? 1","1")
+                choisirDate()
+            }
+        }
+
+        //bouton de val
         button.setOnClickListener{
             Log.i("Informations :", fav.isChecked().toString())
 
@@ -72,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             val emailSTR = email.text.toString().trim()
             val genreId = genre.checkedRadioButtonId
 
+            //test les conditions de remplissage
             if (nom.isEmpty() || prenom.isEmpty() || emailSTR.isEmpty() || genreId == -1) {
                 //Toast.makeText(this, "Veuillez remplir tous les champs obligatoires", Toast.LENGTH_SHORT).show()
                 val snack = Snackbar.make(it,"Veuillez remplir tous les champs obligatoires",Snackbar.LENGTH_LONG)
@@ -81,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 val snack = Snackbar.make(it,"Veuillez saisir une adresse email valide",Snackbar.LENGTH_LONG)
                 snack.show()
             } else {
-
+                //remplie les info
                 val genreText = if (genreId != -1) {
                     val genreButton = findViewById<RadioButton>(genreId)
                     genreButton.text.toString()
@@ -137,6 +153,39 @@ class MainActivity : AppCompatActivity() {
                 dialog.show()
             }
         }
+    }
+
+    private fun choisirDate() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+        val dateInputLayout = findViewById<TextInputLayout>(R.id.datenaissance)
+        val datenaisse = findViewById<EditText>(R.id.editTextDate)
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance() //creer le calendrier
+                selectedDate.set(year, month, dayOfMonth) //met par defaut à aujourd'hui
+
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())//le format
+                val formattedDate = sdf.format(selectedDate.time)
+
+                Log.i("Passe ici ou quoi ? 2","2")
+                datenaisse.setText(formattedDate)
+                Log.i("Passe ici ou quoi ? 2","3")
+            },
+            year,
+            month,
+            dayOfMonth
+        )
+
+        datePickerDialog.setOnDismissListener {
+            datenaisse.requestFocus()
+        }
+
+        datePickerDialog.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

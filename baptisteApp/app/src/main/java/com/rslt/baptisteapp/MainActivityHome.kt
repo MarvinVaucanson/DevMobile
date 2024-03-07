@@ -33,6 +33,7 @@ class MainActivityHome : AppCompatActivity() {
             changerfenetre()
         }
 
+        //action sur la liste view
         listView.setOnItemClickListener { adapterView, view, position, id ->
             val selectedItem = adapter.getItem(position) as String
             Log.i("Objet selectionné :", selectedItem)
@@ -61,6 +62,7 @@ class MainActivityHome : AppCompatActivity() {
         mainActivityResultLauncher.launch(intent)
     }
 
+    //transfert les infos
     private val mainActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if(result.resultCode == Activity.RESULT_OK) {
